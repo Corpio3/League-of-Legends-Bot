@@ -4,7 +4,9 @@ using LeagueBot.Image;
 using LeagueBot.IO;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Net;
 using System.Threading;
 using System.Windows.Forms;
@@ -15,14 +17,55 @@ namespace LeagueBot.Game.Entities
     {
         private int PlayerLevel;
         private Point PlayerPosition;
-        private string URL;
+
+        private string URL { get { return "https://127.0.0.1:" + GetPort() + "/liveclientdata/activeplayer"; } }
 
         Api.Game game = new Api.Game();
 
         public MainPlayer(GameApi api) : base(api)
         {
-            URL = "https://127.0.0.1:2999/liveclientdata/activeplayer";
             PlayerLevel = 0;
+        }
+
+        private String GetPort()
+        {
+            try
+            {
+
+                var processes = Process.GetProcessesByName("League Of Legends");
+
+                using (var ns = new Process())
+                {
+                    ProcessStartInfo psi = new ProcessStartInfo("netstat.exe", "-ano");
+                    psi.RedirectStandardOutput = true;
+                    psi.UseShellExecute = false;
+                    ns.StartInfo = psi;
+                    ns.Start();
+
+                    using (StreamReader r = ns.StandardOutput)
+                    {
+                        string output = r.ReadToEnd();
+                        ns.WaitForExit();
+
+                        string[] lines = output.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
+
+                        foreach (string line in lines)
+                        {
+                            if (line.Contains(processes[0].Id.ToString()) && line.Contains("0.0.0.0:0"))
+                            {
+                                var outp = line.Split(' ');
+                                return outp[6].Replace("127.0.0.1:", "");
+                            }
+                        }
+                    }
+                }
+
+            }
+            catch
+            {
+            }
+
+            return string.Empty;
         }
 
         private void update()
@@ -328,7 +371,7 @@ namespace LeagueBot.Game.Entities
 
         public int getHealthPercent()
         {
-            return (int)(100*game.currentHealth/game.maxHealth);
+            return (int)(100 * game.currentHealth / game.maxHealth);
         }
         public int getManaPercent()
         {

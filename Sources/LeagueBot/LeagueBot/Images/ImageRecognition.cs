@@ -22,7 +22,7 @@ namespace LeagueBot.Image
 
 
         //Find image coordinates on screen
-        public static Point ImageCoords(string image, int resolution = 3 )
+        public static Point ImageCoords(string image, int resolution = 3)
         {
 
             if (ImageUtils.ImageTimestampExpired(image, STEP))
@@ -39,7 +39,7 @@ namespace LeagueBot.Image
         }
 
         //Does an image exist on our screen
-        public static bool ImageExists(string image, int resolution = 3 )
+        public static bool ImageExists(string image, int resolution = 3)
         {
             if (ImageUtils.ImageTimestampExpired(image, STEP))
             {
@@ -207,7 +207,15 @@ namespace LeagueBot.Image
                             {
 
                                 //If the pixel does not match, unset the matched variable
-                                if (pixels[start - i] != search[(PixelCache.GetWidth(filename) * PixelCache.GetHeight(filename)) - i]) matched = false;
+                                try
+                                {
+                                    if (pixels[start - i] != search[(PixelCache.GetWidth(filename) * PixelCache.GetHeight(filename)) - i]) matched = false;
+
+                                }
+                                catch
+                                {
+                                    matched = false;
+                                }
 
                             }
 
@@ -269,15 +277,15 @@ namespace LeagueBot.Image
         }
 
 
-    //Find X/Y coords of an image on screen
-    public static Point FindImagePosition(string filename, int resolution = 3 )
+        //Find X/Y coords of an image on screen
+        public static Point FindImagePosition(string filename, int resolution = 3)
         {
 
             //Convert images to pixel arrays
             int[] pixels = PixelCache.GetPixels(PixelCache.SCREENSHOT_IMAGE_NAME);
             int[] search = PixelCache.GetPixels(filename);
 
-         
+
 
             //Set X and Y pointer for search
             int x = 1;
@@ -290,9 +298,9 @@ namespace LeagueBot.Image
                 //If this pixel matches the first pixel in our image
                 if (pixels[key] == search[0])
                 {
-                    
-                     //Create a matched variable
-                     bool matched = true;
+
+                    //Create a matched variable
+                    bool matched = true;
 
                     //Foreach X pixel in our resolution
                     for (int i = 1; i < resolution; ++i)
@@ -302,9 +310,9 @@ namespace LeagueBot.Image
                         if (pixels[key + i] != search[i]) matched = false;
 
                     }
-                    
+
                     //If the first resolution is matched, move on
-                    if( matched )
+                    if (matched)
                     {
                         //Foreach Y pixel in our resolution
                         for (int i = 1; i < resolution; ++i)
@@ -315,28 +323,28 @@ namespace LeagueBot.Image
                         }
 
                         //If we have matched the resoltion again, move on
-                        if( matched )
+                        if (matched)
                         {
 
                             //The starting pointer ( end of the iamge on screen )
-                            int start = ( key ) + ( PixelCache.GetWidth( PixelCache.SCREENSHOT_IMAGE_NAME ) * ( PixelCache.GetHeight( filename ) - 1 ) ) + PixelCache.GetWidth( filename );
-                            
+                            int start = (key) + (PixelCache.GetWidth(PixelCache.SCREENSHOT_IMAGE_NAME) * (PixelCache.GetHeight(filename) - 1)) + PixelCache.GetWidth(filename);
+
 
                             //Increment the amount of pixels to remove
-                            for( int i = 1; i < resolution; ++i)
+                            for (int i = 1; i < resolution; ++i)
                             {
-                                
-                                 //If the pixel does not match, unset the matched variable
-                                 if( pixels[ start - i ] != search[ ( PixelCache.GetWidth( filename ) * PixelCache.GetHeight( filename ) ) - i ] ) matched = false;
+
+                                //If the pixel does not match, unset the matched variable
+                                if (pixels[start - i] != search[(PixelCache.GetWidth(filename) * PixelCache.GetHeight(filename)) - i]) matched = false;
 
                             }
 
                             //Did we match the last X pixels of our image?
-                            if( matched)
+                            if (matched)
                             {
 
                                 //Finally, we will match the four center pixels of the image, to ensure this really is what we are looking for
-                                if( pixels[key + (PixelCache.GetWidth(PixelCache.SCREENSHOT_IMAGE_NAME) * (PixelCache.GetHeight(filename) / 2)) + (PixelCache.GetWidth(filename) / 2)] == search[(PixelCache.GetWidth(filename) * (PixelCache.GetHeight(filename) / 2) + (PixelCache.GetWidth(filename) / 2))] &&
+                                if (pixels[key + (PixelCache.GetWidth(PixelCache.SCREENSHOT_IMAGE_NAME) * (PixelCache.GetHeight(filename) / 2)) + (PixelCache.GetWidth(filename) / 2)] == search[(PixelCache.GetWidth(filename) * (PixelCache.GetHeight(filename) / 2) + (PixelCache.GetWidth(filename) / 2))] &&
                                     pixels[key + (PixelCache.GetWidth(PixelCache.SCREENSHOT_IMAGE_NAME) * ((PixelCache.GetHeight(filename) / 2) + 1)) + (PixelCache.GetWidth(filename) / 2)] == search[(PixelCache.GetWidth(filename) * ((PixelCache.GetHeight(filename) / 2) + 1) + (PixelCache.GetWidth(filename) / 2))] &&
                                     pixels[key + (PixelCache.GetWidth(PixelCache.SCREENSHOT_IMAGE_NAME) * (PixelCache.GetHeight(filename) / 2)) + (PixelCache.GetWidth(filename) / 2) + 1] == search[(PixelCache.GetWidth(filename) * (PixelCache.GetHeight(filename) / 2) + (PixelCache.GetWidth(filename) / 2)) + 1] &&
                                     pixels[key + (PixelCache.GetWidth(PixelCache.SCREENSHOT_IMAGE_NAME) * ((PixelCache.GetHeight(filename) / 2) + 1)) + (PixelCache.GetWidth(filename) / 2) + 1] == search[(PixelCache.GetWidth(filename) * ((PixelCache.GetHeight(filename) / 2) + 1) + (PixelCache.GetWidth(filename) / 2)) + 1])
@@ -348,11 +356,11 @@ namespace LeagueBot.Image
                                 }
 
                             }
-                            
+
                         }
 
                     }
-                    
+
                 }
 
                 //If we are at the edge of the screen
@@ -386,6 +394,6 @@ namespace LeagueBot.Image
 
 
         //FIX ME, downsize images correctly for pixel to pixel matching
-        
+
     }
 }
